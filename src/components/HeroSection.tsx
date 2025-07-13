@@ -133,13 +133,14 @@ const HeroSection = () => {
           </div>
 
           {/* Right Content - Spline 3D */}
-          <div ref={splineRef} className="relative h-[600px] lg:h-[700px]">
+          <div ref={splineRef} className="relative w-full h-[600px] lg:h-[700px]">
             <iframe 
               src='https://my.spline.design/orb-eT3a18hSR4lh38qXJtdfEcry/' 
               frameBorder='0' 
               width='100%' 
               height='100%'
-              className="rounded-2xl"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ border: 'none' }}
             />
           </div>
         </div>
