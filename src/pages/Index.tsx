@@ -1,13 +1,36 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState, useEffect } from 'react';
+import Navigation from '../components/Navigation';
+import HeroSection from '../components/HeroSection';
+import AboutSection from '../components/AboutSection';
+import ProjectsSection from '../components/ProjectsSection';
+import ContactSection from '../components/ContactSection';
+import Footer from '../components/Footer';
+import Preloader from '../components/Preloader';
+import SmoothScroll from '../components/SmoothScroll';
 
 const Index = () => {
+  const [loading, setLoading] = useState(true);
+
+  const handleLoadingComplete = () => {
+    setLoading(false);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <>
+      {loading && <Preloader onComplete={handleLoadingComplete} />}
+      
+      <div className={`min-h-screen bg-slate-900 text-white transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
+        <SmoothScroll>
+          <Navigation />
+          <HeroSection />
+          <AboutSection />
+          <ProjectsSection />
+          <ContactSection />
+          <Footer />
+        </SmoothScroll>
       </div>
-    </div>
+    </>
   );
 };
 
