@@ -7,7 +7,7 @@ const CustomCursor = () => {
   const cursorDotRef = useRef<HTMLDivElement>(null);
   const rafId = useRef<number>();
 
-  // Throttle mousemove with requestAnimationFrame for better performance
+  // Use native CSS transforms for better performance
   const moveCursor = useCallback((e: MouseEvent) => {
     if (rafId.current) {
       cancelAnimationFrame(rafId.current);
@@ -19,16 +19,9 @@ const CustomCursor = () => {
 
       if (!cursor || !cursorDot) return;
 
-      // Use faster GSAP settings for smoother movement
-      gsap.set(cursor, {
-        x: e.clientX,
-        y: e.clientY,
-      });
-
-      gsap.set(cursorDot, {
-        x: e.clientX,
-        y: e.clientY,
-      });
+      // Use native CSS transform for instant movement
+      cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+      cursorDot.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
     });
   }, []);
 
@@ -38,11 +31,9 @@ const CustomCursor = () => {
 
     if (!cursor || !cursorDot) return;
 
-    // Set initial GPU acceleration
-    gsap.set([cursor, cursorDot], {
-      force3D: true,
-      transformOrigin: "center center"
-    });
+    // Set initial position
+    cursor.style.transform = 'translate(-50%, -50%)';
+    cursorDot.style.transform = 'translate(-50%, -50%)';
 
     const handleMouseEnter = () => {
       gsap.to(cursor, {
@@ -86,16 +77,16 @@ const CustomCursor = () => {
       });
     };
 
-    // Add event listeners
+    // Add event listeners with passive for better performance
     document.addEventListener('mousemove', moveCursor, { passive: true });
-    document.addEventListener('mouseenter', handleMouseEnter);
-    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseenter', handleMouseEnter, { passive: true });
+    document.addEventListener('mouseleave', handleMouseLeave, { passive: true });
 
     // Add hover effects for clickable elements
     const clickableElements = document.querySelectorAll('button, a, [role="button"]');
     clickableElements.forEach(el => {
-      el.addEventListener('mouseenter', handleClickableEnter);
-      el.addEventListener('mouseleave', handleClickableLeave);
+      el.addEventListener('mouseenter', handleClickableEnter, { passive: true });
+      el.addEventListener('mouseleave', handleClickableLeave, { passive: true });
     });
 
     return () => {
@@ -121,12 +112,10 @@ const CustomCursor = () => {
         ref={cursorRef}
         className="fixed top-0 left-0 w-8 h-8 border border-cyan-400/50 rounded-full pointer-events-none z-[9999] mix-blend-difference"
         style={{ 
-          transform: 'translate(-50%, -50%)',
           boxShadow: '0 0 20px rgba(34, 211, 238, 0.3)',
           backdropFilter: 'blur(2px)',
           willChange: 'transform',
-          backfaceVisibility: 'hidden',
-          perspective: 1000
+          contain: 'layout style paint'
         }}
       />
       
@@ -135,11 +124,9 @@ const CustomCursor = () => {
         ref={cursorDotRef}
         className="fixed top-0 left-0 w-2 h-2 bg-cyan-400 rounded-full pointer-events-none z-[9999]"
         style={{ 
-          transform: 'translate(-50%, -50%)',
           boxShadow: '0 0 10px rgba(34, 211, 238, 0.8)',
           willChange: 'transform',
-          backfaceVisibility: 'hidden',
-          perspective: 1000
+          contain: 'layout style paint'
         }}
       />
     </>
