@@ -8,34 +8,31 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Footer = () => {
   const footerRef = useRef<HTMLElement>(null);
-  const particlesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.fromTo(footerRef.current, {
       opacity: 0,
-      y: 60,
-      filter: "blur(10px)"
+      y: 30
     }, {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
-      duration: 1,
+      duration: 0.8,
       scrollTrigger: {
         trigger: footerRef.current,
         start: "top 90%"
       }
     });
 
-    // Floating particles animation
+    // Simplified floating animation - less particles, slower movement
     gsap.to(".particle", {
-      y: -30,
-      opacity: 0.7,
-      duration: 4,
+      y: -20,
+      opacity: 0.5,
+      duration: 6,
       repeat: -1,
       yoyo: true,
       ease: "power1.inOut",
       stagger: {
-        amount: 2,
+        amount: 3,
         from: "random"
       }
     });
@@ -50,16 +47,16 @@ const Footer = () => {
 
   return (
     <footer ref={footerRef} className="relative py-16 bg-gradient-to-t from-slate-900 to-slate-900/80 border-t border-slate-800">
-      {/* Background particles */}
-      <div ref={particlesRef} className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(12)].map((_, i) => (
+      {/* Reduced background particles for performance */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(6)].map((_, i) => (
           <div
             key={i}
-            className="particle absolute w-1 h-1 bg-cyan-400/30 rounded-full"
+            className="particle absolute w-1 h-1 bg-cyan-400/20 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 4}s`
+              animationDelay: `${Math.random() * 6}s`
             }}
           />
         ))}

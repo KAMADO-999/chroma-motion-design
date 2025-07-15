@@ -13,19 +13,8 @@ const HeroSection = () => {
   useEffect(() => {
     const tl = gsap.timeline({ delay: 0.5 });
     
-    // Hero animations
+    // Hero animations - simplified for performance
     tl.fromTo(titleRef.current, {
-      opacity: 0,
-      y: 50,
-      filter: "blur(10px)"
-    }, {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      duration: 1.2,
-      ease: "power3.out"
-    })
-    .fromTo(subtitleRef.current, {
       opacity: 0,
       y: 30
     }, {
@@ -33,64 +22,49 @@ const HeroSection = () => {
       y: 0,
       duration: 0.8,
       ease: "power2.out"
-    }, "-=0.6")
-    .fromTo(buttonRef.current?.children, {
+    })
+    .fromTo(subtitleRef.current, {
       opacity: 0,
-      y: 20,
-      scale: 0.9
+      y: 20
     }, {
       opacity: 1,
       y: 0,
-      scale: 1,
       duration: 0.6,
-      stagger: 0.2,
-      ease: "back.out(1.7)"
+      ease: "power2.out"
     }, "-=0.4")
-    .fromTo(splineRef.current, {
+    .fromTo(buttonRef.current?.children, {
       opacity: 0,
-      x: 100
+      y: 15
     }, {
       opacity: 1,
-      x: 0,
-      duration: 1,
+      y: 0,
+      duration: 0.5,
+      stagger: 0.15,
       ease: "power2.out"
-    }, "-=0.8");
+    }, "-=0.3")
+    .fromTo(splineRef.current, {
+      opacity: 0
+    }, {
+      opacity: 1,
+      duration: 0.8,
+      ease: "power2.out"
+    }, "-=0.6");
 
-    // Floating orbs animation
+    // Simplified floating animation - less intensive
     gsap.to(".glow-orb", {
-      y: -20,
-      duration: 3,
+      y: -15,
+      duration: 4,
       repeat: -1,
       yoyo: true,
       ease: "power1.inOut",
-      stagger: 0.5
+      stagger: 1
     });
-
-    // CTA button hover effect
-    const ctaButton = buttonRef.current?.querySelector('.cta-button');
-    if (ctaButton) {
-      ctaButton.addEventListener('mouseenter', () => {
-        gsap.to(ctaButton, {
-          scale: 1.05,
-          duration: 0.3,
-          ease: "power2.out"
-        });
-      });
-      
-      ctaButton.addEventListener('mouseleave', () => {
-        gsap.to(ctaButton, {
-          scale: 1,
-          duration: 0.3,
-          ease: "power2.out"
-        });
-      });
-    }
   }, []);
 
   return (
     <section id="home" ref={heroRef} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
-      {/* Background Spline 3D Model */}
-      <div ref={splineRef} className="absolute inset-0 w-full h-full z-0">
+      {/* Background Spline 3D Model - optimized loading */}
+      <div ref={splineRef} className="absolute inset-0 w-full h-full z-0 opacity-80">
         <iframe 
           src='https://my.spline.design/orb-eT3a18hSR4lh38qXJtdfEcry/' 
           frameBorder='0' 
@@ -98,14 +72,14 @@ const HeroSection = () => {
           height='100%'
           className="absolute inset-0 w-full h-full object-cover"
           style={{ border: 'none' }}
+          loading="lazy"
         />
       </div>
 
-      {/* Background orbs */}
+      {/* Background orbs - reduced count for performance */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
-        <div className="glow-orb absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl"></div>
-        <div className="glow-orb absolute top-3/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-        <div className="glow-orb absolute top-1/2 left-3/4 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="glow-orb absolute top-1/4 left-1/4 w-48 h-48 bg-cyan-500/8 rounded-full blur-3xl"></div>
+        <div className="glow-orb absolute top-3/4 right-1/4 w-64 h-64 bg-purple-500/8 rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative z-20 max-w-7xl mx-auto px-6 pt-32 pb-20">
@@ -132,7 +106,7 @@ const HeroSection = () => {
             </p>
             
             <div ref={buttonRef} className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="cta-button group bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-8 py-4 rounded-full font-semibold flex items-center gap-2 hover:shadow-lg hover:shadow-cyan-500/25 transition-all duration-300">
+              <button className="group bg-gradient-to-r from-cyan-500 to-purple-500 text-white px-8 py-4 rounded-full font-semibold flex items-center gap-2 hover:shadow-lg hover:shadow-cyan-500/25 transition-all duration-300">
                 Hire Me
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
