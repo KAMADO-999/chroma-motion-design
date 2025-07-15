@@ -1,10 +1,36 @@
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { gsap } from 'gsap';
 
 const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
+  const rafId = useRef<number>();
+
+  // Throttle mousemove with requestAnimationFrame for better performance
+  const moveCursor = useCallback((e: MouseEvent) => {
+    if (rafId.current) {
+      cancelAnimationFrame(rafId.current);
+    }
+
+    rafId.current = requestAnimationFrame(() => {
+      const cursor = cursorRef.current;
+      const cursorDot = cursorDotRef.current;
+
+      if (!cursor || !cursorDot) return;
+
+      // Use faster GSAP settings for smoother movement
+      gsap.set(cursor, {
+        x: e.clientX,
+        y: e.clientY,
+      });
+
+      gsap.set(cursorDot, {
+        x: e.clientX,
+        y: e.clientY,
+      });
+    });
+  }, []);
 
   useEffect(() => {
     const cursor = cursorRef.current;
@@ -12,26 +38,16 @@ const CustomCursor = () => {
 
     if (!cursor || !cursorDot) return;
 
-    const moveCursor = (e: MouseEvent) => {
-      gsap.to(cursor, {
-        x: e.clientX,
-        y: e.clientY,
-        duration: 0.1,
-        ease: "power2.out"
-      });
-
-      gsap.to(cursorDot, {
-        x: e.clientX,
-        y: e.clientY,
-        duration: 0.05,
-        ease: "power2.out"
-      });
-    };
+    // Set initial GPU acceleration
+    gsap.set([cursor, cursorDot], {
+      force3D: true,
+      transformOrigin: "center center"
+    });
 
     const handleMouseEnter = () => {
       gsap.to(cursor, {
         scale: 1.5,
-        duration: 0.3,
+        duration: 0.2,
         ease: "power2.out"
       });
     };
@@ -39,7 +55,7 @@ const CustomCursor = () => {
     const handleMouseLeave = () => {
       gsap.to(cursor, {
         scale: 1,
-        duration: 0.3,
+        duration: 0.2,
         ease: "power2.out"
       });
     };
@@ -47,12 +63,12 @@ const CustomCursor = () => {
     const handleClickableEnter = () => {
       gsap.to(cursor, {
         scale: 2,
-        duration: 0.3,
+        duration: 0.2,
         ease: "power2.out"
       });
       gsap.to(cursorDot, {
         scale: 0.5,
-        duration: 0.3,
+        duration: 0.2,
         ease: "power2.out"
       });
     };
@@ -60,18 +76,18 @@ const CustomCursor = () => {
     const handleClickableLeave = () => {
       gsap.to(cursor, {
         scale: 1,
-        duration: 0.3,
+        duration: 0.2,
         ease: "power2.out"
       });
       gsap.to(cursorDot, {
         scale: 1,
-        duration: 0.3,
+        duration: 0.2,
         ease: "power2.out"
       });
     };
 
     // Add event listeners
-    document.addEventListener('mousemove', moveCursor);
+    document.addEventListener('mousemove', moveCursor, { passive: true });
     document.addEventListener('mouseenter', handleMouseEnter);
     document.addEventListener('mouseleave', handleMouseLeave);
 
@@ -83,6 +99,10 @@ const CustomCursor = () => {
     });
 
     return () => {
+      if (rafId.current) {
+        cancelAnimationFrame(rafId.current);
+      }
+      
       document.removeEventListener('mousemove', moveCursor);
       document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseleave', handleMouseLeave);
@@ -92,7 +112,7 @@ const CustomCursor = () => {
         el.removeEventListener('mouseleave', handleClickableLeave);
       });
     };
-  }, []);
+  }, [moveCursor]);
 
   return (
     <>
@@ -103,7 +123,10 @@ const CustomCursor = () => {
         style={{ 
           transform: 'translate(-50%, -50%)',
           boxShadow: '0 0 20px rgba(34, 211, 238, 0.3)',
-          backdropFilter: 'blur(2px)'
+          backdropFilter: 'blur(2px)',
+          willChange: 'transform',
+          backfaceVisibility: 'hidden',
+          perspective: 1000
         }}
       />
       
@@ -113,7 +136,10 @@ const CustomCursor = () => {
         className="fixed top-0 left-0 w-2 h-2 bg-cyan-400 rounded-full pointer-events-none z-[9999]"
         style={{ 
           transform: 'translate(-50%, -50%)',
-          boxShadow: '0 0 10px rgba(34, 211, 238, 0.8)'
+          boxShadow: '0 0 10px rgba(34, 211, 238, 0.8)',
+          willChange: 'transform',
+          backfaceVisibility: 'hidden',
+          perspective: 1000
         }}
       />
     </>
