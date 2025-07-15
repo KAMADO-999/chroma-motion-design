@@ -8,6 +8,7 @@ import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
 import Preloader from '../components/Preloader';
 import SmoothScroll from '../components/SmoothScroll';
+import CustomCursor from '../components/CustomCursor';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -20,7 +21,8 @@ const Index = () => {
     <>
       {loading && <Preloader onComplete={handleLoadingComplete} />}
       
-      <div className={`min-h-screen bg-slate-900 text-white transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
+      <div className={`min-h-screen bg-slate-900 text-white transition-opacity duration-1000 cursor-none ${loading ? 'opacity-0' : 'opacity-100'}`}>
+        <CustomCursor />
         <SmoothScroll>
           <Navigation />
           <HeroSection />

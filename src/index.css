@@ -54,6 +54,7 @@ All colors MUST be HSL.
 @layer base {
   * {
     @apply border-border;
+    cursor: none !important; /* Hide default cursor globally */
   }
 
   body {
@@ -63,10 +64,12 @@ All colors MUST be HSL.
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    cursor: none !important;
   }
 
   html {
     scroll-behavior: smooth;
+    cursor: none !important;
   }
 
   /* Custom scrollbar */
